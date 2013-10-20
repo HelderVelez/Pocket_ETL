@@ -16,7 +16,7 @@ In short:
 :   Write one line of code for each table extracted. 
 The table WORK *is the interface.*
 
-[TOC]
+@@TOC@@
 
 ##TABLES
 ###**WORK** - drives the Data Imports and the Job Launcher, via trigger  
