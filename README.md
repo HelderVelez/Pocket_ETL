@@ -21,12 +21,12 @@ The table WORK *is the interface.*
 ##TABLES
 ###**WORK** - drives the Data Imports and the Job Launcher, via trigger  
 >|Fields|Type|Constraint|Use|
- |-----|-----|--------|-------|
- |work_id|number()|not null|primary key, autofilled by the sequence SWORK
- |work_nota|varchar2()|not null|source table name; or `IMPORT`: start the import job; or  `GO_JOB` start job named in WORK_PROC
- |work_proc|varchar2()|not null|process name; ex. `IMP1`  as import name or `p_doc_daily` as a job name - define it in KPBI
-|work_wher|varchar2()||null or *where* clause; ex: `` where ipgVIDE_chav in (76,77,80) and IPGVICT_stat='F'``
-|work_etl2|varchar2()||do this ``<procedure or sql block>`` after import conclusion (define it in KETL2). Ex: ``Ketl2.etl2_tdocdocu``  or  ``update VMAP set VMAP_sql = replace(VMAP_sql, 'IPG','') where VIDE_ID in (76,77,80)``
+|-----|-----|--------|-------|
+|work_id|number()|not null|primary key, autofilled by the sequence SWORK
+|work_nota|varchar2()|not null|source table name; or `IMPORT`: start the import job; or  `GO_JOB` start job named in WORK_PROC
+|work_proc|varchar2()|not null|process name; ex. `IMP1`  as import name or `p_doc_daily` as a job name - define it in KPBI
+|work_wher|varchar2()||null or *where* clause; ex: ` where ipgVIDE_chav in (76,77,80) and IPGVICT_stat='F'`
+|work_etl2|varchar2()||do this `<procedure or sql block>` after import conclusion (define it in KETL2). Ex: `Ketl2.etl2_tdocdocu`  or  `update VMAP set VMAP_sql = replace(VMAP_sql, 'IPG','') where VIDE_ID in (76,77,80)`
 |work_meto|varchar2()||method of import; DC - drop/create table;TI - truncate/insert into table; ID - merge - preverves existing data outside the range WORK_WHER
 |work_inx|varchar2()||control creation of indexes: N - dont create indexes, idem when _METO=ID
 |work_flds|varchar2(4)|not null|`*` or List of field names as in the ext_DB table with optional  alias. Use `,` as sep
@@ -36,7 +36,7 @@ The table WORK *is the interface.*
 |work_done|varchar2()||shows: N before import, D after data import, DI after creation of indexes
 |work_daac|date(7)||timestamp of last change of WORK_DONE
 |work_wait|number(1)||number of seconds to wait before the start of the import
-|work_noat|varchar2()||schema of source table, not implemented ( in use dbLink `EXT_DB``)
+|work_noat|varchar2()||schema of source table, not implemented ( in use dbLink `EXT_DB`)
 |work_neat|varchar2()||schema of target  table, not implemented
 |**special fields**|||
 |type|varchar2(6)||type of record = `work`
@@ -47,7 +47,7 @@ The table WORK *is the interface.*
 |time_stamp|varchar2()||when updated filled via trigger
 |msg|varchar2()||a message
 |user_id|number(2)|not null|default 1 - User POCKET_BI
- |***keys***|
+|***keys***|||
 |work_pk|primary key| |  work_id 
 |work_uk|unique key| | work_nota, work_proc
 |work_users_fk| foreign key||user_id --&lt;users.user_id 
@@ -69,7 +69,7 @@ The table WORK *is the interface.*
 |tprocess|varchar2()||used in the sync after process in ora
 |type|varchar2(6)||type of record
 |user_id|number(2)|not null|default 1 - user pocket_bi
- |***keys***|
+|***keys***|
 |tlog_pk|primary key| |  tlog_id 
 |tlog_user_fk| foreign key||user_id --&lt;users.user_id 
 |**triggers**|||
@@ -100,7 +100,7 @@ suggested package name for user code for transformations/loading, named in `GO_J
 
 
 ##List of objects
-|Type|Name|Obs|
+>|Type|Name|Obs|
 |---|---|---|
 |DbLink|EXT_DB|need DATABASE LINK EXT_DB (adapt)
 |Type|t_str
