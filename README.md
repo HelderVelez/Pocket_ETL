@@ -13,10 +13,10 @@ In the **Pocket_Storage** document, following this one, a strongly opinionated v
 **PocketETL** does the <b>E</b>xtraction phase - in the BI parlance is equivalent to populate the *stagging area* with  snapshots of information.  
 
 In short:
-:   Write one line of code for each table extracted. 
+:   Write one line of code for each table to be extracted. 
 The table WORK *is the interface.*
 
-@@TOC@@
+[TOC]  
 
 ##TABLES
 ###**WORK** - drives the Data Imports and the Job Launcher, via trigger  
