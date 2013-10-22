@@ -6,7 +6,7 @@ Pocket_ETL is part of the application Pocket_BI**.
 *   Launch the <b>T</b>ransformation/<b>L</b>oad jobs (E<b>TL</b>)  
    
 In TI, and in BI (Business Intelligence), there is the constant need to extract information from the *source tables* in the the working environment, where the contents of the tables are in evolution due to the interactions of the users and batch jobs, to the *target tables* frequently in others schemas and sites.  
-This application is generic, but it is Oracle centric because it is coded in PL/SQL and both the sources and the targets are oracle tables.  
+This application is generic, coded in PL/SQL and both the sources and the targets are oracle tables.  
 
 In the **Pocket_Storage** document, following this one, a strongly opinionated view on the <b>T</b>ransformation/<b>L</b>oading phase will be detailed.  
 
