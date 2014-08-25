@@ -3,8 +3,8 @@
 
 **Pocket_BI** is a PL/SQL Business Intelligence (**BI**) framework with the components: 
 
-* [Pocket_ETL](https://github.com/HelderVelez/Pocket_ETL)  here documented
-* **Pocket_Storage** 
+* [Pocket_ETL](https://github.com/HelderVelez/Pocket_ETL)  *Extraction,here documented*
+* [Pocket_Storage](https://github.com/HelderVelez/Pocket_Storage) *Transform and Load* 
 * Pocket_Reports, to be documented later
 
 The Pocket_BI framework has the ability to update and be updated from a **Couch_DB** database to provide an exterior backup and a **Web frontend**.   
