@@ -1,32 +1,51 @@
-#Pocket_ETL 
-**[ETL][WP] in PL/SQL, the easy way.  
-Pocket_ETL is part of the application Pocket_BI**.  
+#**Pocket_ETL** 
+[**ETL**][WP] in PL/SQL, the easy way.  
 
-*   <b>E</b>xtraction (<b>E</b>TL) of data 
-*   Launch the <b>T</b>ransformation/<b>L</b>oad jobs (E<b>TL</b>)  
+**Pocket_BI** is a PL/SQL Business Intelligence (**BI**) framework with the components: 
+
+* [Pocket_ETL](https://github.com/HelderVelez/Pocket_ETL)  here documented
+* **Pocket_Storage** 
+* Pocket_Reports, to be documented later
+
+The Pocket_BI framework has the ability to update and be updated from a **Couch_DB** database to provide an exterior backup and a **Web frontend**.   
+
+Pocket_ETL in short:
+:   Write one line to define the extraction from one table
+:   Write one line to *import* from a group of tables
+:   Write one line to *launch* a job 
+
    
-In TI, and in BI (Business Intelligence), there is the constant need to extract information from the *source tables* in the the working environment, where the contents of the tables are in evolution due to the interactions of the users and batch jobs, to the *target tables* frequently in others schemas and sites.  
-This application is generic, coded in PL/SQL and both the sources and the targets are oracle tables.  
+In TI, and in BI (Business Intelligence), there is the constant need to extract  (<b>E</b>TL) information from the *source tables* in the the working environment, where the contents of the tables are in evolution due to the interactions of the users and batch jobs, to the *target tables* frequently in others schemas and sites.  
+This application is generic and it is coded in PL/SQL. Both the sources and the targets are oracle tables.  
 
-In the **Pocket_Storage** document, following this one, a strongly opinionated view on the <b>T</b>ransformation/<b>L</b>oading phase will be detailed.  
+In the **Pocket_Storage** document, following this one, a strongly opinionated view on the <b>T</b>ransformation/<b>L</b>oading (**TL**) phase will be detailed.  
 
-**PocketETL** does the <b>E</b>xtraction phase - in the BI parlance is equivalent to populate the *stagging area* with  snapshots of information.  
+**Pocket_ETL** does the <b>E</b>xtraction phase - in the BI parlance is equivalent to populate the *stagging area* with  snapshots of information.  
 
-In short:
-:   Write one line of code for each table to be extracted. 
 The table WORK *is the interface.*
 
-[TOC]  
+- [Pocket_ETL](#pocketetl)
+    - [TABLES](#tables)
+        - [**WORK** - drives the Data Imports and the Job Launcher, via trigger](#work---drives-the-data-imports-and-the-job-launcher-via-trigger)
+        - [TLOG - the log record](#tlog---the-log-record)
+    - [PACKAGES](#packages)
+        - [KJOBS - launches the jobs of data import (ETL)](#kjobs---launches-the-jobs-of-data-import-etl)
+        - [KETL main package of ETL](#ketl-main-package-of-etl)
+        - [KETL2 user code](#ketl2-user-code)
+        - [KPBI  user code](#kpbi--user-code)
+    - [List of objects](#list-of-objects)
+    - [Notes](#notes)
+    - [**Example**](#example)
 
-##TABLES
+##**TABLES**
 ###**WORK** - drives the Data Imports and the Job Launcher, via trigger  
 >|Fields|Type|Constraint|Use|
 |-----|-----|--------|-------|
 |work_id|number()|not null|primary key, autofilled by the sequence SWORK
 |work_nota|varchar2()|not null|source table name; or `IMPORT`: start the import job; or  `GO_JOB` start job named in WORK_PROC
 |work_proc|varchar2()|not null|process name; ex. `IMP1`  as import name or `p_doc_daily` as a job name - define it in KPBI
-|work_wher|varchar2()||null or *where* clause; ex: ` where ipgVIDE_chav in (76,77,80) and IPGVICT_stat='F'`
-|work_etl2|varchar2()||do this `<procedure or sql block>` after import conclusion (define it in KETL2). Ex: `Ketl2.etl2_tdocdocu`  or  `update VMAP set VMAP_sql = replace(VMAP_sql, 'IPG','') where VIDE_ID in (76,77,80)`
+|work_wher|varchar2()||null or *where* clause; ex: `` where ipgVIDE_chav in (76,77,80) and IPGVICT_stat='F'``
+|work_etl2|varchar2()||do this ``<procedure or sql block>`` after import conclusion (define it in KETL2). Ex: ``Ketl2.etl2_tdocdocu``  or  ``update VMAP set VMAP_sql = replace(VMAP_sql, 'IPG','') where VIDE_ID in (76,77,80)``
 |work_meto|varchar2()||method of import; DC - drop/create table;TI - truncate/insert into table; ID - merge - preverves existing data outside the range WORK_WHER
 |work_inx|varchar2()||control creation of indexes: N - dont create indexes, idem when _METO=ID
 |work_flds|varchar2(4)|not null|`*` or List of field names as in the ext_DB table with optional  alias. Use `,` as sep
@@ -36,7 +55,7 @@ The table WORK *is the interface.*
 |work_done|varchar2()||shows: N before import, D after data import, DI after creation of indexes
 |work_daac|date(7)||timestamp of last change of WORK_DONE
 |work_wait|number(1)||number of seconds to wait before the start of the import
-|work_noat|varchar2()||schema of source table, not implemented ( in use dbLink `EXT_DB`)
+|work_noat|varchar2()||schema of source table, not implemented ( in use dbLink `EXT_DB``)
 |work_neat|varchar2()||schema of target  table, not implemented
 |**special fields**|||
 |type|varchar2(6)||type of record = `work`
@@ -47,7 +66,7 @@ The table WORK *is the interface.*
 |time_stamp|varchar2()||when updated filled via trigger
 |msg|varchar2()||a message
 |user_id|number(2)|not null|default 1 - User POCKET_BI
-|***keys***|||
+ |***keys***|
 |work_pk|primary key| |  work_id 
 |work_uk|unique key| | work_nota, work_proc
 |work_users_fk| foreign key||user_id --&lt;users.user_id 
@@ -57,9 +76,12 @@ The table WORK *is the interface.*
 
 
 ###TLOG - the log record
-
+**todo** - must include an importance level to the message (Err,Warn,DataCheck, ...) and a number field for DataCheck 
 >|Fields|Type|Constraint|Use|
 |-----|-----|--------|-------|
+|**tlog_id**|number|key|auto||
+|tlog_proc|varchar2(30)|not null|process_key
+|tlog_msg|varchar2(4000)|not null|the message|
 |cdb_db|varchar2()||used in the sync _changes
 |id|varchar2()||couchdb _id
 |rev|varchar2()||couchdb _rev
@@ -69,18 +91,18 @@ The table WORK *is the interface.*
 |tprocess|varchar2()||used in the sync after process in ora
 |type|varchar2(6)||type of record
 |user_id|number(2)|not null|default 1 - user pocket_bi
-|***keys***|
+ |***keys***|
 |tlog_pk|primary key| |  tlog_id 
 |tlog_user_fk| foreign key||user_id --&lt;users.user_id 
 |**triggers**|||
 |gtlog|||
 
-##PACKAGES
-###KJOBS - launches the jobs of data import (ETL) 
+##**PACKAGES**
+###**KJOBS** - launches the jobs of data import (ETL) 
 It is invoked by the `on insert` triggers of WORK in response to `IMPORT` or `GO_JOB` in WORK_NOTA  and waits for conclusion
 >* **import_data_now**(importName), where importName is the content of WORK_PROC 
 >* **go_job**(jobName), jobName is the content of WORK_PROC 
-###KETL main package of ETL 
+###**KETL** main package of ETL 
 >* **exec_job**(jobName) -- launches the *fully qualified* jobName, eventually defined inside the package KPBI, ex:  'KPBI.p_appx(sysdate)'
 >* **copy_source_data**(processName),  
 >* **wait_ended**('process1, process2,...', sleep_seconds), wait until all listed processes write END/ENDED or ABORTED in the log 
@@ -90,25 +112,26 @@ It is invoked by the `on insert` triggers of WORK in response to `IMPORT` or `GO
 >*    p_tlog(proc,msg ,user_id )
 
 >* make_table_equal_to_ext_db(tableName) , internal, not in use
-###KETL2 user code
-suggested package name for the procedures named in WORK_ETL2
-###KPBI  user code 
+###**KETL2** user code
+suggested package name for the procedures invoked in WORK_ETL2
+###**KPBI**  user code 
 suggested package name for user code for transformations/loading, named in `GO_JOB` jobName
 
 
 ----------
 
 
-##List of objects
->|Type|Name|Obs|
-|---|---|---|
-|DbLink|EXT_DB|need DATABASE LINK EXT_DB (adapt)
+##**List of objects**
+
+|Type|Name|Obs||
+|:--|:--|:--|:--|
+|DbLink|EXT_DB|DATABASE LINK <br> to external DB|
 |Type|t_str
 |Type|t_str_table
 |Type|t_2str
 |Type|t_2str_table
 |Procedure| pcompile
-|Function|create_link_to_extdb('POCKET_BI','POCKET_BI','PBI_SA','XE')
+|Function|create_link_to_extdb(<br>'POCKET_BI','POCKET_BI','PBI_SA','XE')
 |Function|split
 |Function|split2
 |Sequence|swork
@@ -174,6 +197,7 @@ insert into work (WORK_NOTA, WORK_PROC) values ('IMPORT','IMP3');
 insert into work (WORK_NOTA, WORK_PROC) values ('IMPORT','IMP4');
 commit; 
 ```
+upon the successful completion of the IMPORT this record is deleted
 ```
 /* wait the conclusion */
 /* see the log: select * from TLOG order by 1 desc;*/
@@ -186,6 +210,7 @@ kjobs.wait_ended('IMP3, IMP4', 30);
 insert into work (WORK_NOTA, WORK_PROC) values ('GO_JOB','p_doc_daily');
 commit;
 ```
+upon completion of the job, the GO_JOB line is deleted
 
 
 
@@ -193,28 +218,29 @@ commit;
 ```
 /* sql to extract columns metadata in md-extra format: 
    replace &tableName */  
-select ' |-----|-----|--------|-------|'  
-     as "|Fields|Type|Constraint|Use|" from dual  
+select 00 as col_id ,  '|&tableName|&table_name|||' from dual 
+union select  00, ' |:-----|:-----|:-----|:-----|:-------|:--|'  
+     as "||Fields|Type|Constraint|Use|" from dual  
 union 
-select lower('|'||tc.column_name||'|'||data_type||'('||default_length||')'||'|'||  
-        decode(nullable,'Y','','not null')||'|') || trim(cc.comments)
-    from user_tab_columns tc , user_col_comments cc  
-    where tc.column_name = cc.column_name  
-    and cc.table_name=tc.TABLE_NAME  
-    and tc.table_name='&tableName'
-    union select '|**special fields**|||' from dual 
-union select '|**keys**|'   from dual 
-union select '|**triggers**|||' from dual  
-union select '||||' from dual;    
+select * from (
+  select COLUMN_ID, lower('||'||tc.column_name||'|'||data_type||'('||default_length||')'||'|'||  
+          decode(nullable,'Y','','not null')||'|') || trim(cc.comments)
+      from user_tab_columns tc , user_col_comments cc  
+      where tc.column_name = cc.column_name  
+      and cc.table_name=tc.TABLE_NAME  
+      and tc.table_name= '&tableName'
+    order by COLUMN_ID   
+)    
+      union select 00,'||**special fields**||CouchDB related||' from dual 
+union select 00,'||**keys**|'   from dual 
+union select 00,'||**triggers**|||' from dual  
+union select 99,'|||||' from dual 
 ```
-
 
 
 [**MIT** License](http://opensource.org/licenses/mit-license.php)  
 &copy;  2013, Helder Velez.  
 
-
 [WP]:(http://en.wikipedia.org/wiki/Extract,_transform,_load "WP")
-
 
 > Written with [StackEdit](http://benweet.github.io/stackedit/).
