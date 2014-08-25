@@ -218,7 +218,7 @@ upon completion of the job, the GO_JOB line is deleted
 ```
 /* sql to extract columns metadata in md-extra format: 
    replace &tableName */  
-select 00 as col_id ,  '|&tableName|&table_name|||' from dual 
+select -1 as col_id ,  '|&tableName|&tableName||||' from dual 
 union select  00, ' |:-----|:-----|:-----|:-----|:-------|:--|'  
      as "||Fields|Type|Constraint|Use|" from dual  
 union 
@@ -231,10 +231,12 @@ select * from (
       and tc.table_name= '&tableName'
     order by COLUMN_ID   
 )    
-      union select 00,'||**special fields**||CouchDB related||' from dual 
-union select 00,'||**keys**|'   from dual 
-union select 00,'||**triggers**|||' from dual  
-union select 99,'|||||' from dual 
+      union select 96,'||**special fields**||CouchDB related||' from dual 
+union select 97,'||**keys**|'   from dual 
+union select 98,'||**triggers**|||' from dual  
+union select 99,'|||||' from dual
+;
+
 ```
 
 
