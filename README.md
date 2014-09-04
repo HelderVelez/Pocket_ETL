@@ -110,11 +110,12 @@ It is invoked by the `on insert` triggers of WORK in response to `IMPORT` or `GO
 >* **wait_job_end**('process1, process2,...', sleep_seconds), wait until conclusion of all listed jobs 
 >* create_indexes(tableName), internal 
 >* execute_etl2(processName), execute the WORK_ETL2(processName), internal, 
->*    p_tlog(proc,msg ,user_id )
-
+>* p_tlog(proc,msg ,user_id )
 >* make_table_equal_to_ext_db(tableName) , internal, not in use
+
 ###**KETL2** user code
 suggested package name for the procedures invoked in WORK_ETL2
+
 ###**KPBI**  user code 
 suggested package name for user code for transformations/loading, named in `GO_JOB` jobName
 
