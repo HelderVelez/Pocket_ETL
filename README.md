@@ -18,7 +18,7 @@ Pocket_ETL in short:
 In TI, and in BI (Business Intelligence), there is the constant need to extract  (<b>E</b>TL) information from the *source tables* in the the working environment, where the contents of the tables are in evolution due to the interactions of the users and batch jobs, to the *target tables* frequently in others schemas and sites.  
 This application is generic and it is coded in PL/SQL. Both the sources and the targets are oracle tables.  
 
-In the **Pocket_Storage** document, following this one, a strongly opinionated view on the <b>T</b>ransformation/<b>L</b>oading (**TL**) phase will be detailed.  
+In the **Pocket_Storage** document, following this one, a strong opinionated view on the <b>T</b>ransformation/<b>L</b>oading (**TL**) phase will be detailed.  
 
 **Pocket_ETL** does the <b>E</b>xtraction phase - in the BI parlance is equivalent to populate the *stagging area* with  snapshots of information.  
 
