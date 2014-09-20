@@ -10,9 +10,9 @@
 The Pocket_BI framework has the ability to update and be updated from a **Couch_DB** database to provide an exterior backup and a **Web frontend**.   
 
 Pocket_ETL in short:
-:   Write one line to define the extraction from one table
-:   Write one line to *import* from a group of tables
-:   Write one line to *launch* a job 
+*   Write one line to define the extraction from one table
+*   Write one line to *import* from a group of tables
+*   Write one line to *launch and control* the execution of a job 
 
    
 In TI, and in BI (Business Intelligence), there is the constant need to extract  (<b>E</b>TL) information from the *source tables* in the the working environment, where the contents of the tables are in evolution due to the interactions of the users and batch jobs, to the *target tables* frequently in others schemas and sites.  
