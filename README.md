@@ -42,7 +42,7 @@ The table WORK *is the interface.*
 >|Fields|Type|Constraint|Use|
 |-----|-----|--------|-------|
 |work_id|number()|not null|primary key, autofilled by the sequence SWORK
-|work_nota|varchar2()|not null|source table name; or `IMPORT`: start the import job; or  `GO_JOB` start job named in WORK_PROC
+|work_nota|varchar2()|not null|source table name; or <br> `IMPORT`: start the import job; or <br> `GO_JOB` start job named in WORK_PROC
 |work_proc|varchar2()|not null|process name; ex. `IMP1`  as import name or `p_doc_daily` as a job name - define it in KPBI
 |work_wher|varchar2()||null or *where* clause; ex: `` where ipgVIDE_chav in (76,77,80) and IPGVICT_stat='F'``
 |work_etl2|varchar2()||do this ``<procedure or sql block>`` after import conclusion (define it in KETL2). Ex: ``Ketl2.etl2_tdocdocu``  or  ``update VMAP set VMAP_sql = replace(VMAP_sql, 'IPG','') where VIDE_ID in (76,77,80)``
